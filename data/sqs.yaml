@@ -13,11 +13,8 @@ sqs:
   price:
     requests:
       per: 1000000
-      prices:
-        - price: 0.4
-          class: standard
-        - price: 0.5
-          class: fifo
+      standard: 0.4
+      fifo: 0.5
     data:
       period: monthly
       in:

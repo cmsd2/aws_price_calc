@@ -1,8 +1,15 @@
 package types
 
+import (
+	"io/ioutil"
+	"gopkg.in/yaml.v2"
+)
+
 type Sqs struct {
 	Classes  []string    `yaml:"classes"`
 	FreeTier SqsFreeTier `yaml:"free_tier"`
+	Limits   Limits      `yaml:"limits"`
+	Price    Price       `yaml:"price"`
 }
 
 type SqsFreeTier struct {
@@ -10,7 +17,7 @@ type SqsFreeTier struct {
 }
 
 type RequestsPerPeriod struct {
-	Value  float32 `yaml:"value"`
+	Value  float64 `yaml:"value"`
 	Period string  `yaml:"period"`
 }
 
@@ -19,7 +26,7 @@ type Limits struct {
 }
 
 type RequestPayloadLimits struct {
-	Value float32
+	Value float64
 	Units string
 }
 
@@ -29,12 +36,13 @@ type Price struct {
 }
 
 type RequestsPrices struct {
-	Per    int32           `yaml:"per"`
-	Prices []RequestsPrice `yaml:"prices"`
+	Per      float64   `yaml:"per"`
+	Standard float64 `yaml:"standard"`
+	Fifo     float64 `yaml:"fifo"`
 }
 
 type RequestsPrice struct {
-	Price float32 `yaml:"price"`
+	Price float64 `yaml:"price"`
 	Class string  `yaml:"class"`
 }
 
@@ -46,7 +54,7 @@ type DataPrices struct {
 
 type DataFlatPrice struct {
 	Type  string  `yaml:"type"`
-	Price float32 `yaml:"price"`
+	Price float64 `yaml:"price"`
 }
 
 type DataLadderPrice struct {
@@ -56,7 +64,21 @@ type DataLadderPrice struct {
 }
 
 type DataBand struct {
-	From  float32 `yaml:"from"`
-	To    float32 `yaml:"to"`
-	Price float32 `yaml:"price"`
+	From  float64 `yaml:"from"`
+	To    float64 `yaml:"to"`
+	Price float64 `yaml:"price"`
+	Poa   bool    `yaml:"poa"`
+}
+
+func LoadConfigFile(file_path string) Types {
+	types := Types{}
+
+	data, err := ioutil.ReadFile(file_path)
+	if err != nil {
+		panic(err)
+	}
+
+	yaml.Unmarshal(data, &types)
+
+	return types
 }
