@@ -2,7 +2,7 @@ package calc
 
 import "testing"
 
-func TestSqsPrice(t *testing.T) {
+func TestSqsPriceRps(t *testing.T) {
 	config := loadSqsTestConfigFile()
 
 	price := SqsPriceRps(&config, 100, false, 4)
@@ -11,7 +11,7 @@ func TestSqsPrice(t *testing.T) {
 	}
 }
 
-func TestSqsRawPrice(t *testing.T) {
+func TestSqsPrice(t *testing.T) {
 	config := loadSqsTestConfigFile()
 
 	price := SqsPrice(&config, 267840000, false, 4)
