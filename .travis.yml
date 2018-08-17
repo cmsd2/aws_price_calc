@@ -13,7 +13,7 @@ addons:
 install:
   - sudo pip install awscli
 
-script: ./deps.sh && ./build.sh
+script: ./build.sh
 
 deploy:
   provider: script
