@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: An example Lambda written in Golang
+Resources:
+  PriceCalcFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: main
+      CodeUri: .
+      Events:
+        RootHandler:
+          Type: Api
+          Properties:
+            Path: '/calc'
+            Method: post
+  PriceCalcApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          description: AWS Price Calc API
+          version: 1.0.0
+          title: AWS Price Calc API
+
+          license:
+            name: Apache 2.0
+            url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+        paths:
+          /calc:
+            post:
+              tags: []
+              summary: adds an inventory item
+              operationId: calc
+              description: Calculate the price of infrastructure
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              parameters:
+              - in: body
+                name: stack
+                description: Stack to price
+                schema:
+                  $ref: '#/definitions/Stack'
+              responses:
+                "200":
+                  description: item created
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/definitions/CalcResponse'
+                "400":
+                  description: invalid input, object invalid
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PriceCalcFunction.Arn}/invocations
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws_proxy"
+        definitions:
+          Stack:
+            type: object
+            required:
+            - resources
+            properties:
+              description:
+                type: string
+              resources:
+                type: array
+                items:
+                  $ref: '#/definitions/Resource'
+                description: map of Resource objects
+          Resource:
+            type: object
+            required:
+            - name
+            - type
+            - properties
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                - AWS::SQS::Queue
+              properties:
+                type: object
+          CalcResponse:
+            type: object
+            properties:
+              resources:
+                type: array
+                items:
+                  $ref: '#/definitions/CalcResponseResource'
+          CalcResponseResource:
+            type: object
+            properties:
+              monthlyCost:
+                type: number
+

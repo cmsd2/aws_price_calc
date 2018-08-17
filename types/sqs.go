@@ -70,7 +70,7 @@ type DataBand struct {
 	Poa   bool    `yaml:"poa"`
 }
 
-func LoadConfigFile(file_path string) Types {
+func LoadConfigFile(file_path string) *Types {
 	types := Types{}
 
 	data, err := ioutil.ReadFile(file_path)
@@ -80,5 +80,5 @@ func LoadConfigFile(file_path string) Types {
 
 	yaml.Unmarshal(data, &types)
 
-	return types
+	return &types
 }

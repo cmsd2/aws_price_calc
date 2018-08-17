@@ -1,0 +1,98 @@
+swagger: '2.0'
+info:
+  description: AWS Price Calc API
+  version: 1.0.0
+  title: AWS Price Calc API
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+paths:
+  /calc:
+    post:
+      tags: []
+      summary: adds an inventory item
+      operationId: calc
+      description: Calculate the price of infrastructure
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: stack
+        description: Stack to price
+        schema:
+          $ref: '#/definitions/Stack'
+      responses:
+        200:
+          description: item created
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CalcResponse'
+        400:
+          description: invalid input, object invalid
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:021523638892:function:ia-aws-price-calc-ExampleAPI-N0W4Z5RSNNLB/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+definitions:
+  Stack:
+    type: object
+    required:
+    - resources
+    properties:
+      Description:
+        type: string
+      Resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+        description: map of Resource objects
+  Resource:
+    type: object
+    required:
+    - name
+    - type
+    - properties
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+        enum:
+        - AWS::SQS::Queue
+      properties:
+        type: object
+  SqsQueueProperties:
+    type: object
+    required:
+    - requestsPerMonth
+    - messageSizeKB
+    properties:
+      fifoQueue:
+        type: boolean
+        default: false
+      requests:
+        type: number
+      messageSizeKB:
+        type: number
+  CalcResponse:
+    type: object
+    properties:
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/CalcResponseResources'
+    CalcResponseResources:
+      type: array
+      items:
+        $ref: '#/definitions/CalcResponseResource'
+    CalcResponseResource:
+      type: object
+      properties:
+        monthlyCost:
+          type: number

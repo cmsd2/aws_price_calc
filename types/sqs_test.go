@@ -17,7 +17,7 @@ func configFile(filename string) string {
 }
 
 func loadSqsTestConfigFile() Sqs {
-	yaml_path := configFile("sqs.yaml")
+	yaml_path := configFile("Sqs.yaml")
 
 	return LoadConfigFile(yaml_path).Sqs
 }
