@@ -2,6 +2,8 @@ language: go
 go:
   - "1.10"
 
+sudo: true
+
 addons:
   apt:
     packages:
@@ -9,7 +11,7 @@ addons:
     - python-pip
 
 install:
-  - pip install awscli
+  - sudo pip install awscli
 
 script: ./deps.sh && ./build.sh
 
