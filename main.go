@@ -4,17 +4,18 @@ import (
 	"errors"
 	"log"
 
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"path"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/gorilla/mux"
-	"github.com/davyzhang/agw"
-	"net/http"
-	"encoding/json"
 	"github.com/cmsd2/aws_price_calc/api"
-	"fmt"
-	"github.com/cmsd2/aws_price_calc/types"
 	"github.com/cmsd2/aws_price_calc/calc"
-	"path"
+	"github.com/cmsd2/aws_price_calc/types"
+	"github.com/davyzhang/agw"
+	"github.com/gorilla/mux"
 )
 
 //go:generate go run scripts/includetxt.go
@@ -55,7 +56,7 @@ func handleCalc(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.(*agw.LPResponse).WriteBody(map[string]string{
-			"error":    "Bad Request",
+			"error": "Bad Request",
 		}, false)
 		return
 	}
@@ -64,7 +65,7 @@ func handleCalc(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.(*agw.LPResponse).WriteBody(map[string]string{
-			"error":    "Bad Request",
+			"error":   "Bad Request",
 			"message": err.Error(),
 		}, false)
 	}
@@ -75,7 +76,7 @@ func handleCalc(w http.ResponseWriter, r *http.Request) {
 func calcResources(request api.Request) (*api.Response, error) {
 	response := new(api.Response)
 
-	for i := range(request.Resources) {
+	for i := range request.Resources {
 		resource := request.Resources[i]
 
 		responseResource, err := calcResourceCost(resource)
@@ -91,6 +92,8 @@ func calcResources(request api.Request) (*api.Response, error) {
 
 func calcResourceCost(resource api.Resource) (*api.ResponseResource, error) {
 	responseResource := new(api.ResponseResource)
+	responseResource.Name = resource.Name
+	responseResource.Type = resource.Type
 
 	switch resource.Type {
 	case api.SqsResourceType:
