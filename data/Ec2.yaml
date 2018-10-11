@@ -1,0 +1,17 @@
+ec2:
+  regions:
+    - name: "us-east-1"
+      instances:
+        prices:
+          instance_types:
+            - name: "m5.large"
+              description: "M5 General Purpose Large"
+              os: "linux"
+              reservations:
+                - type: "ondemand"
+                  price: 0.096
+                  per: "hour"
+                  bullet: 0
+                  term:
+                    length: 0
+                    period: "year"

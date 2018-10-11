@@ -1,6 +1,10 @@
 package calc
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/cmsd2/aws_price_calc/types"
+)
 
 func TestSqsPriceRps(t *testing.T) {
 	config := loadSqsTestConfigFile()
@@ -18,4 +22,10 @@ func TestSqsPrice(t *testing.T) {
 	if !float_equals(199.0, price, 0.01) {
 		t.Errorf("Price was incorrect, got: %f, want: %f", price, 199.0)
 	}
+}
+
+func loadSqsTestConfigFile() types.Sqs {
+	yamlPath := configFile("Sqs.yaml")
+
+	return types.LoadConfigFile(yamlPath).Sqs
 }

@@ -39,6 +39,8 @@ type Ec2InstanceProperties struct {
 	ReservationType string  `json:"reservationType"`
 	Utilisation     float64 `json:"utilisation"`
 	Region          string  `json:"region"`
+	Quantity        int32   `json:"quantity"`
+	TermYears       int32   `json:"term_years"`
 }
 
 func (e *Resource) UnmarshalJSON(js []byte) error {

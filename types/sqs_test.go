@@ -1,20 +1,6 @@
 package types
 
 import "testing"
-import "runtime"
-import (
-	"path/filepath"
-)
-
-func dataDir() string {
-	_, filename, _, _ := runtime.Caller(0)
-	types_dir := filepath.Dir(filename)
-	return filepath.Join(types_dir, "..", "data")
-}
-
-func configFile(filename string) string {
-	return filepath.Join(dataDir(), filename)
-}
 
 func loadSqsTestConfigFile() Sqs {
 	yaml_path := configFile("Sqs.yaml")

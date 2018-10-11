@@ -1,10 +1,5 @@
 package types
 
-import (
-	"io/ioutil"
-	"gopkg.in/yaml.v2"
-)
-
 type Sqs struct {
 	Classes  []string    `yaml:"classes"`
 	FreeTier SqsFreeTier `yaml:"free_tier"`
@@ -36,7 +31,7 @@ type Price struct {
 }
 
 type RequestsPrices struct {
-	Per      float64   `yaml:"per"`
+	Per      float64 `yaml:"per"`
 	Standard float64 `yaml:"standard"`
 	Fifo     float64 `yaml:"fifo"`
 }
@@ -68,17 +63,4 @@ type DataBand struct {
 	To    float64 `yaml:"to"`
 	Price float64 `yaml:"price"`
 	Poa   bool    `yaml:"poa"`
-}
-
-func LoadConfigFile(file_path string) *Types {
-	types := Types{}
-
-	data, err := ioutil.ReadFile(file_path)
-	if err != nil {
-		panic(err)
-	}
-
-	yaml.Unmarshal(data, &types)
-
-	return &types
 }

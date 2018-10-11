@@ -106,6 +106,16 @@ func calcResourceCost(resource api.Resource) (*api.ResponseResource, error) {
 		if err != nil {
 			return nil, err
 		}
+	case api.Ec2ResourceType:
+		ec2Properties, ok := resource.Properties.(api.Ec2InstanceProperties)
+		if !ok {
+			return nil, fmt.Errorf("unexpected deserialised type")
+		}
+
+		err := calcEc2InstanceCost(resource, ec2Properties, responseResource)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("resource %s has unsupported type %s", resource.Name, resource.Type)
 	}
@@ -124,6 +134,51 @@ func calcSqsQueueCost(resource api.Resource, sqsProperties api.SqsProperties, re
 	responseResource.MonthlyCost = price
 
 	return nil
+}
+
+func calcEc2InstanceCost(resource api.Resource, ec2Properties api.Ec2InstanceProperties, responseResource *api.ResponseResource) error {
+	instanceData := calc.Ec2InstancePriceData{
+		Region:       ec2Properties.Region,
+		InstanceType: ec2Properties.InstanceType,
+		Reservation:  ec2Properties.ReservationType,
+		Os:           ec2Properties.OperatingSystem,
+		TermLength:   ec2Properties.TermYears,
+		TermPeriod:   "year",
+	}
+
+	price, err := calc.Ec2InstancePrice(&config.Ec2, instanceData)
+
+	responseResource.MonthlyCost, err = monthlyPrice(price.Price, price.Per, ec2Properties.Utilisation, float64(ec2Properties.Quantity))
+	responseResource.UpfrontCost = price.Bullet
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func monthlyPrice(price float64, period string, utilisation float64, quantity float64) (float64, error) {
+	var multiplier float64
+
+	switch period {
+	case "second":
+		multiplier = 60 * 60 * 24 * 31
+	case "minute":
+		multiplier = 60 * 24 * 31
+	case "hour":
+		multiplier = 24 * 31
+	case "day":
+		multiplier = 31
+	case "week":
+		multiplier = 31.0 / 7.0
+	case "month":
+		multiplier = 1
+	default:
+		return 0, fmt.Errorf("unrecognised period %s", period)
+	}
+
+	return multiplier, nil
 }
 
 func loadConfig() *types.Types {

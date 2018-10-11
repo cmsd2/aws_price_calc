@@ -8,4 +8,5 @@ type ResponseResource struct {
 	Name        string  `json:"name"`
 	Type        string  `json:"type"`
 	MonthlyCost float64 `json:"monthlyCost"`
+	UpfrontCost float64 `json:"upfrontCost"`
 }
