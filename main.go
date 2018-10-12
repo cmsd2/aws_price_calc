@@ -147,6 +147,9 @@ func calcEc2InstanceCost(resource api.Resource, ec2Properties api.Ec2InstancePro
 	}
 
 	price, err := calc.Ec2InstancePrice(&config.Ec2, instanceData)
+	if err != nil {
+		return err
+	}
 
 	responseResource.MonthlyCost, err = monthlyPrice(price.Price, price.Per, ec2Properties.Utilisation, float64(ec2Properties.Quantity))
 	responseResource.UpfrontCost = price.Bullet
