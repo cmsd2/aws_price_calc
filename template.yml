@@ -15,6 +15,12 @@ Resources:
           Properties:
             Path: '/calc'
             Method: post
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PriceCalcApi}/*"
+
   PriceCalcApi:
     Type: AWS::Serverless::Api
     Properties:
