@@ -106,7 +106,7 @@ Resources:
 Outputs:
   RestApiId:
     Description: Api Gateway Id
-    Value: !ref PriceCalcApi
+    Value: !Ref PriceCalcApi
   ProdEndpoint:
     Description: "API Prod rest api endpoint"
     Value: !Sub "https://${PriceCalcApi}.execute-api.${AWS::Region}.amazonaws.com/${PriceCalcApiProdStage}/"
