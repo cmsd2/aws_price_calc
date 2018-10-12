@@ -2,9 +2,11 @@ package types
 
 import (
 	"io/ioutil"
+	"path"
 	"path/filepath"
 	"runtime"
 
+	"github.com/cmsd2/aws_price_calc/data"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -23,15 +25,26 @@ func configFile(filename string) string {
 	return filepath.Join(dataDir(), filename)
 }
 
-func LoadConfigFile(file_path string) *Types {
-	types := Types{}
+func New() *Types {
+	return &Types{}
+}
 
-	data, err := ioutil.ReadFile(file_path)
+func (config *Types) LoadConfigFile(file_name string) {
+	yamlPath := path.Join("data", file_name)
+
+	data, err := ioutil.ReadFile(yamlPath)
 	if err != nil {
 		panic(err)
 	}
 
-	yaml.Unmarshal(data, &types)
+	yaml.Unmarshal(data, config)
+}
 
-	return &types
+func NewConfigFromFiles() *Types {
+	config := New()
+
+	yaml.Unmarshal([]byte(data.Ec2), config)
+	yaml.Unmarshal([]byte(data.Sqs), config)
+
+	return config
 }

@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"path"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -184,14 +183,8 @@ func monthlyPrice(price float64, period string, utilisation float64, quantity fl
 	return multiplier, nil
 }
 
-func loadConfig() *types.Types {
-	yaml_path := path.Join("data", "Sqs.yaml")
-
-	return types.LoadConfigFile(yaml_path)
-}
-
 func main() {
-	config = loadConfig()
+	config = types.NewConfigFromFiles()
 	mux := mux.NewRouter()
 	mux.HandleFunc("/calc", handleCalc)
 	lambda.Start(agw.Handler(mux))

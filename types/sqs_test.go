@@ -2,18 +2,8 @@ package types
 
 import "testing"
 
-func loadSqsTestConfigFile() Sqs {
-	yaml_path := configFile("Sqs.yaml")
-
-	return LoadConfigFile(yaml_path).Sqs
-}
-
-func TestSqsTypes(t *testing.T) {
-	loadSqsTestConfigFile()
-}
-
 func TestSqsRequestsPrice(t *testing.T) {
-	sqs := loadSqsTestConfigFile()
+	sqs := NewConfigFromFiles().Sqs
 
 	if sqs.Price.Requests.Per != 1000000.0 {
 		t.Errorf("Per was incorrect, got: %f, want: %f", sqs.Price.Requests.Per, 1000000.0)

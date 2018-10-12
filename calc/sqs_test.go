@@ -7,7 +7,7 @@ import (
 )
 
 func TestSqsPriceRps(t *testing.T) {
-	config := loadSqsTestConfigFile()
+	config := types.NewConfigFromFiles().Sqs
 
 	price := SqsPriceRps(&config, 100, false, 4)
 	if !float_equals(199.0, price, 0.01) {
@@ -16,16 +16,10 @@ func TestSqsPriceRps(t *testing.T) {
 }
 
 func TestSqsPrice(t *testing.T) {
-	config := loadSqsTestConfigFile()
+	config := types.NewConfigFromFiles().Sqs
 
 	price := SqsPrice(&config, 267840000, false, 4)
 	if !float_equals(199.0, price, 0.01) {
 		t.Errorf("Price was incorrect, got: %f, want: %f", price, 199.0)
 	}
-}
-
-func loadSqsTestConfigFile() types.Sqs {
-	yamlPath := configFile("Sqs.yaml")
-
-	return types.LoadConfigFile(yamlPath).Sqs
 }

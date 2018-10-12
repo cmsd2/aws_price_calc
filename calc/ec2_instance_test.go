@@ -7,7 +7,7 @@ import (
 )
 
 func TestEc2InstancePrice(t *testing.T) {
-	config := loadEc2InstanceTestConfigFile()
+	config := types.NewConfigFromFiles().Ec2
 
 	data := Ec2InstancePriceData{
 		Region:       "us-east-1",
@@ -29,10 +29,4 @@ func TestEc2InstancePrice(t *testing.T) {
 	if !float_equals(0.096, termPrice.Price, 0.01) {
 		t.Errorf("Periodic price was incorrect, got: %f, want: %f", termPrice.Price, 0.096)
 	}
-}
-
-func loadEc2InstanceTestConfigFile() types.Ec2 {
-	yamlPath := configFile("Ec2.yaml")
-
-	return types.LoadConfigFile(yamlPath).Ec2
 }
