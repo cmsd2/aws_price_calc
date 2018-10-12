@@ -20,7 +20,8 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PriceCalcApi}/*"
-
+      FunctionName: !GetAtt PriceCalcFunction.Arn
+      Principal: "apigateway.amazonaws.com"
   PriceCalcApi:
     Type: AWS::Serverless::Api
     Properties:
